@@ -31,37 +31,244 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+        <h1>
+<a name="reproducible-research-peer-assessment-1" class="anchor" href="#reproducible-research-peer-assessment-1"><span class="octicon octicon-link"></span></a>Reproducible Research: Peer Assessment 1</h1>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<h2>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<p>This assignment takes in the data file named activity.zip, extracts the csv data file from it.<br>
+This extracted acticity.csv data file is then read and processed to answer the following questions.</p>
+
+<h2>
+<a name="loading-and-preprocessing-the-data" class="anchor" href="#loading-and-preprocessing-the-data"><span class="octicon octicon-link"></span></a>Loading and preprocessing the data</h2>
+
+<p>These are the steps involved in loading and preprocessing the data file.</p>
+
+<ul>
+<li>First, the activity.zip file is downloaded from the provided URL<br>
+if the activity.zip file doesn't exist already</li>
+<li>Extracts the activity.csv data file from the activity.zip file</li>
+<li>Loads the data from activity.csv file using read.csv method</li>
+<li>pre-processes the data set to use Date values instead of String date</li>
+</ul><p>Here's the code in R to load and preprocess the data as described above:</p>
+
+<div class="highlight highlight-r"><pre><span class="kn">require</span><span class="p">(</span><span class="s">"data.table"</span><span class="p">)</span>
+</pre></div>
+
+<pre><code>## Loading required package: data.table
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<div class="highlight highlight-r"><pre><span class="kr">if</span> <span class="p">(</span><span class="o">!</span><span class="kp">file.exists</span><span class="p">(</span><span class="s">"activity.zip"</span><span class="p">))</span> <span class="p">{</span>
+    download.file<span class="p">(</span><span class="s">"https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"</span><span class="p">,</span> 
+                  destfile <span class="o">=</span> <span class="s">"activity.zip"</span><span class="p">)</span>
+    <span class="p">}</span>
+unzip<span class="p">(</span><span class="s">"activity.zip"</span><span class="p">)</span>
+completeActivityData <span class="o">&lt;-</span> read.csv <span class="p">(</span><span class="s">"activity.csv"</span><span class="p">)</span>
+completeActivityData<span class="o">$</span>date <span class="o">&lt;-</span> <span class="kp">as.Date</span><span class="p">(</span>completeActivityData<span class="o">$</span><span class="kp">date</span><span class="p">,</span> <span class="s">"%Y-%m-%d"</span><span class="p">)</span>
+<span class="c1">## Display the top 3 rows from this preprocessed data set</span>
+<span class="kp">head</span><span class="p">(</span>completeActivityData<span class="p">,</span> <span class="m">3</span><span class="p">)</span>
+</pre></div>
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<pre><code>##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+</code></pre>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<h2>
+<a name="what-is-mean-total-number-of-steps-taken-per-day" class="anchor" href="#what-is-mean-total-number-of-steps-taken-per-day"><span class="octicon octicon-link"></span></a>What is mean total number of steps taken per day?</h2>
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<p>To answer the first part of the question, we first ignore the missing values. </p>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<div class="highlight highlight-r"><pre>activityData <span class="o">&lt;-</span> completeActivityData<span class="p">[</span><span class="o">!</span><span class="kp">is.na</span><span class="p">(</span>completeActivityData<span class="o">$</span>steps<span class="p">),]</span>
+<span class="c1">## Display the top 3 rows from this processed data set</span>
+<span class="kp">head</span><span class="p">(</span>activityData<span class="p">,</span><span class="m">3</span><span class="p">)</span>
+</pre></div>
 
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<pre><code>##     steps       date interval
+## 289     0 2012-10-02        0
+## 290     0 2012-10-02        5
+## 291     0 2012-10-02       10
+</code></pre>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>Then, we calculate the total number of steps taken each day for which the data is available.<br>
+To do this, we use ddply function.</p>
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<div class="highlight highlight-r"><pre><span class="kn">require</span><span class="p">(</span><span class="s">"plyr"</span><span class="p">)</span>
+</pre></div>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<pre><code>## Loading required package: plyr
+</code></pre>
+
+<div class="highlight highlight-r"><pre>activityData <span class="o">&lt;-</span> ddply<span class="p">(</span>activityData<span class="p">,</span> <span class="kt">c</span><span class="p">(</span><span class="s">"date"</span><span class="p">),</span> summarise<span class="p">,</span> totalDaySteps<span class="o">=</span><span class="kp">sum</span><span class="p">(</span>steps<span class="p">))</span>
+<span class="c1">## Display the top 3 rows from this processed data set</span>
+<span class="kp">head</span><span class="p">(</span>activityData<span class="p">,</span><span class="m">3</span><span class="p">)</span>
+</pre></div>
+
+<pre><code>##         date totalDaySteps
+## 1 2012-10-02           126
+## 2 2012-10-03         11352
+## 3 2012-10-04         12116
+</code></pre>
+
+<p>Then, we plot the histogram displaying the total number of steps taken each day.</p>
+
+<div class="highlight highlight-r"><pre>hist<span class="p">(</span>activityData<span class="o">$</span>totalDaySteps<span class="p">,</span>
+     main<span class="o">=</span><span class="s">"Hstorgram of total steps taken each day"</span><span class="p">,</span>
+     xlab<span class="o">=</span><span class="s">"Total steps each day"</span><span class="p">)</span>
+</pre></div>
+
+<p><img src="figure/unnamed-chunk-4.png" alt="plot of chunk unnamed-chunk-4"></p>
+
+<p>Mean of total steps taken per day is: 10766<br>
+Median of total steps taken per day is: 10765  </p>
+
+<h2>
+<a name="what-is-the-average-daily-activity-pattern" class="anchor" href="#what-is-the-average-daily-activity-pattern"><span class="octicon octicon-link"></span></a>What is the average daily activity pattern?</h2>
+
+<p>To answer the first part of the question, we first ignore the missing values. </p>
+
+<div class="highlight highlight-r"><pre>activityData <span class="o">&lt;-</span> completeActivityData<span class="p">[</span><span class="o">!</span><span class="kp">is.na</span><span class="p">(</span>completeActivityData<span class="o">$</span>steps<span class="p">),]</span>
+</pre></div>
+
+<p>Then, we calculate the average number of steps taken for each time slot across all the day<br>
+for which the data is available. To do this, we use ddply function.</p>
+
+<div class="highlight highlight-r"><pre><span class="kn">require</span><span class="p">(</span><span class="s">"plyr"</span><span class="p">)</span>
+activityData <span class="o">&lt;-</span> ddply<span class="p">(</span>activityData<span class="p">,</span> <span class="kt">c</span><span class="p">(</span><span class="s">"interval"</span><span class="p">),</span> summarise<span class="p">,</span> averageNumberOfSteps<span class="o">=</span><span class="kp">mean</span><span class="p">(</span>steps<span class="p">))</span>
+<span class="c1">## Display the top 3 rows from this processed data set</span>
+<span class="kp">head</span><span class="p">(</span>activityData<span class="p">,</span><span class="m">3</span><span class="p">)</span>
+</pre></div>
+
+<pre><code>##   interval averageNumberOfSteps
+## 1        0               1.7170
+## 2        5               0.3396
+## 3       10               0.1321
+</code></pre>
+
+<p>Then, we display the time series plot of the average number of steps for each<br>
+time slot across all the day.</p>
+
+<div class="highlight highlight-r"><pre><span class="kn">require</span><span class="p">(</span><span class="s">"ggplot2"</span><span class="p">)</span>
+</pre></div>
+
+<pre><code>## Loading required package: ggplot2
+</code></pre>
+
+<div class="highlight highlight-r"><pre>myplot <span class="o">&lt;-</span> qplot<span class="p">(</span>interval<span class="p">,</span> averageNumberOfSteps<span class="p">,</span> data <span class="o">=</span> activityData<span class="p">)</span> <span class="o">+</span> 
+    geom_line<span class="p">()</span> <span class="o">+</span>
+    labs<span class="p">(</span>title<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="s">"Time series plot of average steps taken across all days"</span><span class="p">),</span>
+         x<span class="o">=</span><span class="s">"Time intervals"</span><span class="p">,</span>
+         y<span class="o">=</span><span class="s">"Average number of steps taken"</span><span class="p">)</span>
+myplot
+</pre></div>
+
+<p><img src="figure/unnamed-chunk-7.png" alt="plot of chunk unnamed-chunk-7"></p>
+
+<p>5-minute time interval: 835<br>
+has the maximum number of steps of: 206.1698, on average across all days in the data set.</p>
+
+<h2>
+<a name="imputing-missing-values" class="anchor" href="#imputing-missing-values"><span class="octicon octicon-link"></span></a>Imputing missing values</h2>
+
+<p>There are a number of days/intervals where there are missing values (coded as NA).<br>
+The presence of missing days may introduce bias into some calculations or summaries of the data.  </p>
+
+<ul>
+<li>The total number of missing values in the dataset is: 15264<br>
+</li>
+<li>We will fill in all of the missing values in the dataset with the mean for that 5-minute interval.<br>
+</li>
+<li>The new dataset that is equal to the original dataset but with the missing data filled in:</li>
+</ul><div class="highlight highlight-r"><pre>activityData <span class="o">&lt;-</span> completeActivityData
+activityData<span class="o">$</span>avg <span class="o">&lt;-</span> ave<span class="p">(</span>activityData<span class="o">$</span>steps<span class="p">,</span>activityData<span class="o">$</span>interval<span class="p">,</span>FUN<span class="o">=</span><span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> <span class="kp">mean</span><span class="p">(</span>x<span class="p">,</span>na.rm<span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
+activityData<span class="o">$</span>steps<span class="p">[</span><span class="kp">is.na</span><span class="p">(</span>activityData<span class="o">$</span>steps<span class="p">)]</span> <span class="o">&lt;-</span> activityData<span class="o">$</span>avg<span class="p">[</span><span class="kp">is.na</span><span class="p">(</span>activityData<span class="o">$</span>steps<span class="p">)]</span>
+</pre></div>
+
+<p>If we calculate the total number of steps taken each day for the dataset with mean of that 5 minute<br>
+time interval for which the values are missing using the ddply function:</p>
+
+<div class="highlight highlight-r"><pre><span class="kn">require</span><span class="p">(</span><span class="s">"plyr"</span><span class="p">)</span>
+activityData <span class="o">&lt;-</span> ddply<span class="p">(</span>activityData<span class="p">,</span> <span class="kt">c</span><span class="p">(</span><span class="s">"date"</span><span class="p">),</span> summarise<span class="p">,</span> totalDaySteps<span class="o">=</span><span class="kp">sum</span><span class="p">(</span>steps<span class="p">))</span>
+<span class="c1">## Display the top 3 rows from this processed data set</span>
+<span class="kp">head</span><span class="p">(</span>activityData<span class="p">,</span><span class="m">3</span><span class="p">)</span>
+</pre></div>
+
+<pre><code>##         date totalDaySteps
+## 1 2012-10-01         10766
+## 2 2012-10-02           126
+## 3 2012-10-03         11352
+</code></pre>
+
+<p>Now, we plot the histogram displaying the total number of steps taken each day.</p>
+
+<div class="highlight highlight-r"><pre>hist<span class="p">(</span>activityData<span class="o">$</span>totalDaySteps<span class="p">,</span>
+     main<span class="o">=</span><span class="s">"Hstorgram of total steps taken each day"</span><span class="p">,</span>
+     xlab<span class="o">=</span><span class="s">"Total steps each day"</span><span class="p">)</span>
+</pre></div>
+
+<p><img src="figure/unnamed-chunk-10.png" alt="plot of chunk unnamed-chunk-10"></p>
+
+<p>Mean of total steps taken per day after filling in the missing values with its mean is: 10766<br>
+Median of total steps taken per day after filling in the missing values with its mean is: 10766  </p>
+
+<p>Do these values differ from the estimates from the first part of the assignment?  </p>
+
+<ul>
+<li>Mean value stays the same as before when the mean was calculated without using the missing values<br>
+compared to the mean calculated by filling in mean of 5-minute time interval for that missing values.</li>
+<li>Median value changed based on the number of missing values in the data. If the missing data values<br>
+and current frequency of the mean values put to gether is greater than the frequency of the median<br>
+value calculated without using median values, it would have stayed the same as before. Since the number<br>
+of missing values increased the frequency of the mean values in the data after filling in the missing<br>
+values, the new median is the same as the mean value.</li>
+</ul><p>What is the impact of imputing missing data on the estimates of the total daily number of steps?</p>
+
+<ul>
+<li>Even though the mean value is NOT impacted by imputing the missing data, median value changed<br>
+to be the same as the mean value due to the number of missing values skewing the frequency of the<br>
+mean values after imputing the missing data.</li>
+</ul><h2>
+<a name="are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="anchor" href="#are-there-differences-in-activity-patterns-between-weekdays-and-weekends"><span class="octicon octicon-link"></span></a>Are there differences in activity patterns between weekdays and weekends?</h2>
+
+<p>To address this question, we do the following steps to process the data:  </p>
+
+<ul>
+<li>Take a copy of the original activity data</li>
+<li>Identify and label weekdays and weekends into a factor of 2 levels: "weekday", "weekend"</li>
+<li>Compute the average number of steps taken per interval across weekday and weekends using the<br>
+ddply function, coputing the mean on the combination of interval and weekday factor level</li>
+<li>Plot the average number of steps taken per interval using factor weekday as the facet</li>
+<li>Display the computed plot</li>
+</ul><div class="highlight highlight-r"><pre><span class="kn">require</span><span class="p">(</span><span class="s">"plyr"</span><span class="p">)</span>
+<span class="kn">require</span><span class="p">(</span><span class="s">"ggplot2"</span><span class="p">)</span>
+activityData <span class="o">&lt;-</span> completeActivityData
+<span class="c1">#identify if the day is weekday or weekend</span>
+activityData<span class="o">$</span>weekday <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">"Weekday"</span><span class="p">)</span>
+activityData<span class="o">$</span>weekday<span class="p">[</span><span class="kp">weekdays</span><span class="p">(</span>activityData<span class="o">$</span><span class="kp">date</span><span class="p">,</span> abbreviate<span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span> <span class="o">%in%</span> <span class="kt">c</span><span class="p">(</span><span class="s">"Sat"</span><span class="p">,</span><span class="s">"Sun"</span><span class="p">)]</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">"Weekend"</span><span class="p">)</span>
+<span class="c1">#calculate the average number of steps for the interval across weekdays / weekends</span>
+activityData <span class="o">&lt;-</span> ddply<span class="p">(</span>activityData<span class="p">,</span> 
+                      <span class="kt">c</span><span class="p">(</span><span class="s">"interval"</span><span class="p">,</span><span class="s">"weekday"</span><span class="p">),</span> 
+                      summarise<span class="p">,</span> 
+                      meanSteps<span class="o">=</span><span class="kp">mean</span><span class="p">(</span>steps<span class="p">,</span> na.rm<span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
+<span class="c1">#plot the data for weekday and weekend in different panels</span>
+myplot <span class="o">&lt;-</span> qplot<span class="p">(</span>interval<span class="p">,</span> meanSteps<span class="p">,</span> data <span class="o">=</span> activityData<span class="p">,</span> col<span class="o">=</span>weekday<span class="p">)</span> <span class="o">+</span> 
+    facet_wrap<span class="p">(</span> <span class="o">~</span> weekday<span class="p">,</span> ncol<span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
+    guides<span class="p">(</span>colour<span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span> <span class="o">+</span>
+    geom_line<span class="p">()</span> <span class="o">+</span>
+    labs<span class="p">(</span>title<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="s">"Activity patterns between weekday and weekend"</span><span class="p">),</span>
+         x<span class="o">=</span><span class="s">"Interval"</span><span class="p">,</span> y<span class="o">=</span><span class="s">"Number of steps"</span><span class="p">)</span>
+<span class="c1">#display the plot</span>
+myplot
+</pre></div>
+
+<p><img src="figure/unnamed-chunk-11.png" alt="plot of chunk unnamed-chunk-11"></p>
+
+<p>As can be seen from the plot, the subjects weekend activities starts earlier than that of his/her<br>
+weekday and peaks between 9 and 10am. However, on weekdays the activies start later but stays high<br>
+consistently across the day unlike the weekends where the activies go down after 10am and stays<br>
+relatively lower compared to the subjects weekday activity pattern.  </p>
       </section>
     </div>
 
